@@ -1,0 +1,105 @@
+module AsyncRack
+
+  ##
+  # @see AsyncRack::AsyncCallback
+  def self.AsyncCallback(name, namespace = Rack)
+    @wrapped ||= Hash.new { |h,k| h[k] = {} }
+    @wrapped[namespace][name.to_sym] ||= namespace.const_get(name).tap do |klass|
+      klass.extend AsyncCallback::InheritanceHook
+      klass.alias_subclass name, namespace
+    end
+  end
+
+  ##
+  # Helps wrapping already existent middleware in a transparent manner.
+  #
+  # @example
+  #   module Rack
+  #     class FancyMiddleware
+  #     end
+  #   end
+  #
+  #   module AsyncRack
+  #     class FancyMiddleware < AsyncCallback(:FancyMiddleware)
+  #     end
+  #   end
+  #
+  #   Rack::FancyMiddleware # => AsyncRack::FancyMiddleware
+  #   AsyncRack::FancyMiddleware.ancestors # => [AsyncRack::AsyncCallback::Mixin, Rack::FancyMiddleware, ...]
+  module AsyncCallback
+
+    ##
+    # Aliases a subclass on subclassing, but only once.
+    # If that name already is in use, it will be replaced.
+    #
+    # @example
+    #   class Foo
+    #     def self.bar
+    #       23
+    #     end
+    #   end
+    #
+    #   Foo.extend AsyncRack::AsyncCallback::InheritanceHook
+    #   Foo.alias_subclass :Baz
+    #
+    #   class Bar < Foo
+    #     def self.bar
+    #       super + 19
+    #     end
+    #   end
+    #
+    #   Baz.bar # => 42
+    module InheritanceHook
+
+      ##
+      # @param [Symbol] name Name it will be aliased to
+      # @param [Class, Module] namespace The module the constant will be defined in
+      def alias_subclass(name, namespace = Object)
+        @alias_subclass = [name, namespace]
+      end
+
+      ##
+      # @see InheritanceHook
+      def inherited(klass)
+        super
+        if @alias_subclass
+          name, namespace = @alias_subclass
+          @alias_subclass = nil
+          namespace.send :remove_const, name if namespace.const_defined?
+          namespace.const_set name, klass
+          klass.send :include, AsyncRack::AsyncCallback::Mixin
+        end
+      end
+    end
+
+    ##
+    # A simple wrapper is useful if the first thing a middleware does is something like
+    # @app.call and then modifies the response.
+    #
+    # In that case you just have to include SimpleWrapper in your async wrapper class.
+    module SimpleWrapper
+      def async_callback(result)
+        @app = proc { result }
+        super call(@env)
+      end
+    end
+
+    module Mixin
+      def async_callback(result)
+        @async_callback[result]
+      end
+
+      def setup_async(env)
+        return false if @async_callback
+        @async_callback, env['async.callback'] = env['async.callback'], method(:async_callback)
+        @async_close,    env['async.close']    = env['async.close'],    method(:async_close)
+        @env = env
+      end
+
+      def call(env)
+        setup_async env
+        super
+      end
+    end
+  end
+end
