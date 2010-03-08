@@ -1,4 +1,5 @@
 require "rack"
+require "async_rack/async_callback"
 
 module AsyncRack
   module BaseMixin
@@ -18,9 +19,6 @@ module AsyncRack
       end
     end
   end
-
-  # Async's little helper
-  autoload :AsyncCallback, 'async_rack/async_callback'
 
   # Wrapped rack middleware
   autoload :Chunked,        "async_rack/chunked"

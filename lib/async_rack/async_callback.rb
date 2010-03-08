@@ -65,7 +65,7 @@ module AsyncRack
         if @alias_subclass
           name, namespace = @alias_subclass
           @alias_subclass = nil
-          namespace.send :remove_const, name if namespace.const_defined?
+          namespace.send :remove_const, name if namespace.const_defined? name
           namespace.const_set name, klass
           klass.send :include, AsyncRack::AsyncCallback::Mixin
         end
