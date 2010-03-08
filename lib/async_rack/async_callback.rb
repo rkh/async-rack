@@ -86,13 +86,13 @@ module AsyncRack
 
     module Mixin
       def async_callback(result)
-        @async_callback[result]
+        @async_callback.call result
       end
 
       def setup_async(env)
         return false if @async_callback
-        @async_callback, env['async.callback'] = env['async.callback'], method(:async_callback)
-        @async_close,    env['async.close']    = env['async.close'],    method(:async_close)
+        @async_callback = env['async.callback']
+        env['async.callback'] = method :async_callback
         @env = env
       end
 
