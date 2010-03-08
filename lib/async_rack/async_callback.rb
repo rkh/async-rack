@@ -72,18 +72,6 @@ module AsyncRack
       end
     end
 
-    ##
-    # A simple wrapper is useful if the first thing a middleware does is something like
-    # @app.call and then modifies the response.
-    #
-    # In that case you just have to include SimpleWrapper in your async wrapper class.
-    module SimpleWrapper
-      def async_callback(result)
-        @app = proc { result }
-        super call(@env)
-      end
-    end
-
     module Mixin
       def async_callback(result)
         @async_callback.call result
@@ -99,6 +87,19 @@ module AsyncRack
       def call(env)
         setup_async env
         super
+      end
+    end
+
+    ##
+    # A simple wrapper is useful if the first thing a middleware does is something like
+    # @app.call and then modifies the response.
+    #
+    # In that case you just have to include SimpleWrapper in your async wrapper class.
+    module SimpleWrapper
+      include AsyncRack::AsyncCallback::Mixin
+      def async_callback(result)
+        @app = proc { result }
+        super call(@env)
       end
     end
   end

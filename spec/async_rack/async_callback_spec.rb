@@ -25,6 +25,23 @@ describe AsyncRack::AsyncCallback do
   end
 
   describe :SimpleWrapper do
+    it "runs #call again on async callback, replacing app" do
+      klass = Class.new do
+        include AsyncRack::AsyncCallback::SimpleWrapper
+        attr_accessor :app, :env
+        def call(env)
+          setup_async env
+          @app.call(env) + 5
+        end
+      end
+      middleware = klass.new
+      middleware.app = proc { throw :async }
+      catch(:async) do
+        middleware.call "async.callback" => proc { |x| x + 10 }
+        raise "should not get here"
+      end
+      middleware.env["async.callback"].call(0).should == 15
+    end
   end
 
   describe :Mixin do
