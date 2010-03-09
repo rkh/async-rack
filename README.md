@@ -55,6 +55,7 @@ Here it is a bit tricky. Essentially what you want is running `#call` again on a
 See below to get an idea what actually happens here.
 
 ### Middleware meddling with both your request and your response
+Example: `Rack::Runtime`
 
     # Let's assume there is some not so async middleware.
     module Rack
