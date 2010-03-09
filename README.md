@@ -96,6 +96,8 @@ Example: `Rack::Runtime`
 ## Setup
 In general: Place a `require 'async-rack'` before setting up any middleware or you will end up with the synchronous version!
 
+Please keep in mind that it only "fixes" middleware that ships with rack. Read: It works very well with Sinatra. With Rails and Merb, not so much!
+
 ### With Rack
 In your `config.ru`:
 
