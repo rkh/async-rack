@@ -25,22 +25,52 @@ describe AsyncRack::AsyncCallback do
   end
 
   describe :SimpleWrapper do
-    it "runs #call again on async callback, replacing app" do
-      klass = Class.new do
+    before do
+      @class = Class.new do
         include AsyncRack::AsyncCallback::SimpleWrapper
         attr_accessor :app, :env
+        class << self
+          attr_accessor :instance
+        end
+        def initialize(app = nil)
+          self.class.instance = self
+          @app = app
+        end
         def call(env)
           setup_async env
           @app.call(env) + 5
         end
       end
-      middleware = klass.new
+    end
+
+    it "runs #call again on async callback, replacing app" do
+      middleware = @class.new
       middleware.app = proc { throw :async }
       catch(:async) do
         middleware.call "async.callback" => proc { |x| x + 10 }
         raise "should not get here"
       end
       middleware.env["async.callback"].call(0).should == 15
+    end
+
+    it "plays well with Rack::Builder" do
+      klass = @class
+      app = Rack::Builder.app do
+        use klass
+        run lambda { |env|
+          return 37 if @threw
+          @threw = true
+          throw :async
+        }
+      end
+      catch(:async) do
+        app.call "async.callback" => proc { |x| x + 10 }
+        raise "should not get here"
+      end
+      @class.instance.env["async.callback"].call(0).should == 15
+      @class.instance.env["async.callback"].call(10).should == 25
+      result = app.call "async.callback" => proc { |x| x + 10 }
+      result.should == 42
     end
   end
 
