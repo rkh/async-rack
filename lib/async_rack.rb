@@ -13,12 +13,18 @@ module AsyncRack
   module ExtensionMixin
     ::AsyncRack.extend self
     def autoload(class_name, path)
-      super
-      if Rack.autoload? class_name then Rack.autoload(class_name, path)
-      elsif Rack.const_defined? class_name then require path
+      if Rack.const_defined? class_name
+        require path
+      else
+        Rack.autoload class_name, path
+        super
       end
     end
   end
+
+  # New middleware
+  autoload :CatchAsync,     "async_rack/catch_async"
+  autoload :ThrowAsync,     "async_rack/throw_async"
 
   # Wrapped rack middleware
   autoload :Chunked,        "async_rack/chunked"
