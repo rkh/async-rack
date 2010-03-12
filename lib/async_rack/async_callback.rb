@@ -27,6 +27,10 @@ module AsyncRack
   #   Rack::FancyMiddleware # => AsyncRack::FancyMiddleware
   #   AsyncRack::FancyMiddleware.ancestors # => [AsyncRack::AsyncCallback::Mixin, Rack::FancyMiddleware, ...]
   module AsyncCallback
+    def self.included(mod)
+      mod.send :include, Mixin
+      super
+    end
 
     ##
     # Aliases a subclass on subclassing, but only once.
