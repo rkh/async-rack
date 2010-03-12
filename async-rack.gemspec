@@ -2,7 +2,7 @@ SPEC = Gem::Specification.new do |s|
 
   # Get the facts.
   s.name             = "async-rack"
-  s.version          = "0.4.0.b"
+  s.version          = "0.4.0.c"
   s.description      = "Makes middleware that ships with Rack bullet-proof for async responses."
 
   # External dependencies
