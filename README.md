@@ -1,5 +1,9 @@
 # AsyncRack
 
+## Note upfront
+Still experimental. Feel free to play around.
+
+## Introduction
 So, have you been amazed by thin's `async.callback`? If not, [go](http://macournoyer.com/blog/2009/06/04/pusher-and-async-with-thin/) [check](http://github.com/raggi/async_sinatra) [it](http://github.com/raggi/thin/blob/async_for_rack/example/async_app.ru) [out](http://m.onkey.org/2010/1/7/introducing-cramp). Come back here when you start missing your middleware.
 
 So what is the issue with Rack and `async.callback`? Currently there are two ways of triggering a async responds. The first is to `throw :async`, the latter to return a status code of -1 (even though thin and ebb do disagree on that). Opposed to what others say, I would recommend using `throw`, as it simply skips middleware not able to handle `:async`. Also, it works on all servers supporting `async.callback` – thin, ebb, rainbows! and zbatery – about the same and copes better with middleware that is unable to handle an async respond.
