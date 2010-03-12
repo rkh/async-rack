@@ -31,7 +31,6 @@ module AsyncRack
   autoload :Head,           "async_rack/head"
   autoload :Lock,           "async_rack/lock"
   autoload :Logger,         "async_rack/logger"
-  # autoload :Recursive, "async_rack/recursive"
   autoload :Runtime,        "async_rack/runtime"
   autoload :Sendfile,       "async_rack/sendfile"
   autoload :ShowStatus,     "async_rack/showstatus"
