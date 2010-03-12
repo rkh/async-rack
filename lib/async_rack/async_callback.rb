@@ -72,7 +72,27 @@ module AsyncRack
       end
     end
 
+    module LateInitializer
+      def included(klass)
+        setup_late_initialize klass if klass.is_a? Class
+        klass.extend LateInitializer
+        super
+      end
+
+      private
+      def setup_late_initialize(klass)
+        class << klass
+          alias create new
+          def new(*args, &block)
+            proc { |env| create(*args, &block).call(env) }
+          end
+        end
+      end
+    end
+
     module Mixin
+      extend LateInitializer
+
       def async_callback(result)
         @async_callback.call result
       end

@@ -44,7 +44,7 @@ describe AsyncRack::AsyncCallback do
     end
 
     it "runs #call again on async callback, replacing app" do
-      middleware = @class.new
+      middleware = @class.create
       middleware.app = proc { throw :async }
       catch(:async) do
         middleware.call "async.callback" => proc { |x| x + 10 }
