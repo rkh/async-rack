@@ -28,7 +28,6 @@ describe AsyncRack::AsyncCallback do
     before do
       @class = Class.new do
         include AsyncRack::AsyncCallback::SimpleWrapper
-        attr_accessor :app, :env
         class << self
           attr_accessor :instance
         end
@@ -44,8 +43,7 @@ describe AsyncRack::AsyncCallback do
     end
 
     it "runs #call again on async callback, replacing app" do
-      middleware = @class.create
-      middleware.app = proc { throw :async }
+      middleware = @class.create proc { throw :async }
       catch(:async) do
         middleware.call "async.callback" => proc { |x| x + 10 }
         raise "should not get here"

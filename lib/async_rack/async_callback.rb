@@ -96,6 +96,7 @@ module AsyncRack
 
     module Mixin
       extend LateInitializer
+      attr_accessor :env
 
       def async_callback(result)
         @async_callback.call result
