@@ -34,6 +34,45 @@ How does that work? Simple, whenever necessary, `async-rack` will replace `async
 
 Note: This library only 'fixes' the middleware that ships with rack, not other rack middleware. However, you can use the included helper classes to easily make other libraries handle `async.callback`.
 
+## What's in this package?
+
+### Rack middleware made async-proof
+This middleware now works well with `throw :async`:
+
+* Rack::Chunked
+* Rack::CommonLogger
+* Rack::ConditionalGet
+* Rack::ContentLength
+* Rack::ContentType
+* Rack::Deflater
+* Rack::ETag
+* Rack::Head
+* Rack::Logger
+* Rack::Runtime
+* Rack::Sendfile
+* Rack::ShowStatus
+
+### Middleware that is async-proof out of the box
+No changes where necessary for:
+
+* Rack::Cascade
+* Rack::Config
+* Rack::Directory
+* Rack::File
+* Rack::MethodOverride
+* Rack::Mime
+* Rack::NullLogger
+* Rack::Recursive
+* Rack::Reloader
+* Rack::Static
+* Rack::URLMap
+
+### Middleware not (yet) made async-proof
+
+* Rack::Lint (might not check async responses)
+* Rack::ShowExceptions (might not show exceptions for async responses)
+* Rack::Lock (might raise an exception)
+
 ## How to make a middleware async-proof?
 There are three types of middleware:
 
