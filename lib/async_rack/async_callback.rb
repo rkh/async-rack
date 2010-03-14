@@ -86,9 +86,9 @@ module AsyncRack
       private
       def setup_late_initialize(klass)
         class << klass
-          alias create new
           def new(*args, &block)
-            proc { |env| create(*args, &block).call(env) }
+            return super if File.expand_path(caller.first[/^[^:]+/]) == File.expand_path(__FILE__)
+            proc { |env| new(*args, &block).call(env) }
           end
         end
       end
