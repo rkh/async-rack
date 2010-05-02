@@ -12,7 +12,7 @@ SPEC = Gem::Specification.new do |s|
   # Those should be about the same in any BigBand extension.
   s.authors          = ["Konstantin Haase"]
   s.email            = "konstantin.mailinglists@googlemail.com"
-  s.files            = Dir["**/*.{rb,md}"]
+  s.files            = Dir["**/*.{rb,md}"] << "LICENSE"
   s.has_rdoc         = 'yard'
   s.homepage         = "http://github.com/rkh/#{s.name}"
   s.require_paths    = ["lib"]
