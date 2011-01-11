@@ -19,7 +19,8 @@ module AsyncRack
       while (mod_ = mod_path.shift)
         mod = mod.const_get(mod_.to_sym)
       end
-      if mod.const_defined? class_name
+      # already loaded ? override.
+      if mod.autoload?(class_name) == nil
         require path
       else
         mod.autoload class_name, path
