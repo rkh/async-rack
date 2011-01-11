@@ -1,4 +1,4 @@
-require "rack/pool"
+require "rack/session/pool"
 
 module AsyncRack
   module Session

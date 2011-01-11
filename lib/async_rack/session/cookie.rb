@@ -1,4 +1,4 @@
-require "rack/cookie"
+require "rack/session/cookie"
 
 module AsyncRack
   module Session

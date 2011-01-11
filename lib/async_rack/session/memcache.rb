@@ -1,4 +1,4 @@
-require "rack/memcache"
+require "rack/session/memcache"
 
 module AsyncRack
   module Session
