@@ -13,10 +13,16 @@ module AsyncRack
   module ExtensionMixin
     ::AsyncRack.extend self
     def autoload(class_name, path)
-      if Rack.const_defined? class_name
+      mod = Rack
+      mod_path = self.name.split("::")
+      mod_path.shift
+      while (mod_ = mod_path.shift)
+        mod = mod.const_get(mod_.to_sym)
+      end
+      if mod.const_defined? class_name
         require path
       else
-        Rack.autoload class_name, path
+        mod.autoload class_name, path
         super
       end
     end

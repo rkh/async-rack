@@ -2,7 +2,7 @@ require "rack/pool"
 
 module AsyncRack
   module Session
-    class Pool < AsyncCallback(:Pool, Rack::Session)
+    class Pool < AsyncRack::AsyncCallback(:Pool, Rack::Session)
       def async_callback(result)
         super commit_session(env, *result)
       end
