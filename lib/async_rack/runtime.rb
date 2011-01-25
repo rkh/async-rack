@@ -6,7 +6,7 @@ module AsyncRack
       status, headers, body =result
       request_time = Time.now - @start_time
       headers[@header_name] = "%0.6f" % request_time if !headers.has_key?(@header_name)
-      [status, headers, body]
+      super [status, headers, body]
     end
 
     def call(env)
